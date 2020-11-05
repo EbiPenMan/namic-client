@@ -1,0 +1,7 @@
+{
+  "name": "build-prograph",
+  "version": "1.0.0",
+  "description": "The package template for prograph group.",
+  "author": "Ebrahim Karimi",
+  "main": "build.js"
+}
