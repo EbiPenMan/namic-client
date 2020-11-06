@@ -1,5 +1,6 @@
 import pggGlobalManager from "../zProGraphGroup/pggGlobalManager";
 import {PK_TYPES_SERVER_SEND} from "../zProGraphGroup/Server/PacketType";
+import WelcomeController from "./WelcomeController";
 
 
 const {ccclass, property} = cc._decorator;
@@ -8,17 +9,40 @@ const {ccclass, property} = cc._decorator;
 export default class GameManager extends cc.Component {
 
 
-    onLoad () {
+    @property(cc.Node)
+    welcomePanelNode: cc.Node;
+
+    @property(cc.Node)
+    mainMenuPanelNode: cc.Node;
+
+    onLoad() {
+
+        const self = this;
 
         pggGlobalManager.serverManager.connect(
             function () {
-                pggGlobalManager.loginManager.init();
-        },null,this);
+                pggGlobalManager.loginManager.init(function (res) {
+                    self.welcomePanelNode.getComponent("WelcomeController")
+                        .init(function () {
+                            self.showMainMenu();
+                        });
+                });
+            }, null, this);
 
         pggGlobalManager.serverManager.addCallback(PK_TYPES_SERVER_SEND.CONNECTION_SUCCEED,
             function () {
-                pggGlobalManager.loginManager.init()
+                pggGlobalManager.loginManager.init(function (res) {
+                    self.welcomePanelNode.getComponent("WelcomeController")
+                        .init(function () {
+                            self.showMainMenu();
+                        });
+
+                });
             });
+    }
+
+    showMainMenu() {
+        this.mainMenuPanelNode.getComponent("MainMenuPanelController").init();
     }
 
 

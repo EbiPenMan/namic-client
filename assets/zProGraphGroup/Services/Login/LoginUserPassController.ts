@@ -70,6 +70,8 @@ export default class LoginUserPassController extends cc.Component {
                             if (self.showPanel_onDone)
                                 self.showPanel_onDone({userName:userName , password :btoa(password) });
                         } else if (packetRes.error) {
+                            if (self.showPanel_onError)
+                                self.showPanel_onError(packetRes.error);
                             self.lbl_message.string = JSON.stringify(packetRes.error.message);
                         }
                     }

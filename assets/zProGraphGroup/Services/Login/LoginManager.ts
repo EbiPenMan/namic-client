@@ -67,19 +67,30 @@ export default class LoginManager extends cc.Component {
             this.currentLoginPlatformC = this.loginPlatformC_UserPass;
             this.loginPlatformC_UserPass.showPanel(lastLoginData,
                 function (loginPlatformData: any) {
-                    self.showHideMasterPanel(false);
-                    self.showHideLoader(false);
                     self.saveLoginStorage(loginPlatformType, loginPlatformData);
                     self.setCurrentLoginStorage(loginPlatformType);
-                    if(self.init_onDone)
-                        self.init_onDone();
+                    self.call_onDone();
                 }, function (error) {
-                    self.loginPlatformC_UserPass.hidePanel();
-                    self.showHideLoader(false);
-                    self.showHideMasterPanel(true);
+                    if(error.codeStr === "ERROR_ALREADY_SING_IN"){
+                        self.call_onDone();
+                    }
+                    else {
+                        self.loginPlatformC_UserPass.hidePanel();
+                        self.showHideLoader(false);
+                        self.showHideMasterPanel(true);
+                    }
                 });
         }
 
+    }
+
+    call_onDone(){
+        const self = this;
+        self.showHideMasterPanel(false);
+        self.showHideLoader(false);
+
+        if(self.init_onDone)
+            self.init_onDone();
     }
 
     loginWith(event: any, loginPlatformType: LoginPlatformType) {

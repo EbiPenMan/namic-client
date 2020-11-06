@@ -1,28 +1,52 @@
-// Learn TypeScript:
-//  - https://docs.cocos.com/creator/manual/en/scripting/typescript.html
-// Learn Attribute:
-//  - https://docs.cocos.com/creator/manual/en/scripting/reference/attributes.html
-// Learn life-cycle callbacks:
-//  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
-
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class NewClass extends cc.Component {
+export default class WelcomeController extends cc.Component {
 
-    @property(cc.Label)
-    label: cc.Label = null;
 
-    @property
-    text: string = 'hello';
+    @property(cc.Node)
+    questionsNode: cc.Node[] = [];
 
-    // LIFE-CYCLE CALLBACKS:
+    @property()
+    currentQuestionIndex: number = 0;
+    onDone: any = null;
 
-    // onLoad () {}
-
-    start () {
-
+    init(onDone) {
+        this.node.children[0].active = true;
+        this.onDone = onDone;
+        if (this.currentQuestionIndex >= this.questionsNode.length-1) {
+            this.onEnd();
+        } else {
+            this.setCurrentQuestionNodeActive();
+        }
     }
 
-    // update (dt) {}
+    nextQuestion() {
+        if (this.currentQuestionIndex >= this.questionsNode.length-1) {
+            this.onEnd();
+        } else {
+            this.currentQuestionIndex++;
+            this.setCurrentQuestionNodeActive();
+        }
+    }
+
+    setCurrentQuestionNodeActive() {
+        const self = this;
+        this.questionsNode.map(function (node, index) {
+            node.active = index === self.currentQuestionIndex;
+        });
+    }
+
+    onEnd() {
+        this.node.children[0].active = false;
+
+        if (this.onDone)
+            this.onDone();
+    }
+
+    onQuestionAction(event, actionTag) {
+        console.log("WelcomeController|onQuestionAction|actionTag= " , actionTag)
+        this.nextQuestion();
+    }
+
 }

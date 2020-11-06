@@ -16,7 +16,7 @@ export default class LoaderManager extends cc.Component {
 
         const self = this;
 
-        this.sceneLoaderProgressC = this.sceneLoaderProgressNode.getComponent("SceneLoaderProgress");
+        this.sceneLoaderProgressC = this.sceneLoaderProgressNode.children[0].getComponent("SceneLoaderProgress");
         this.sceneLoaderProgressC.loadSceneAfterPreLoad(false);
         this.sceneLoaderProgressC.loadScene("Menu");
 
