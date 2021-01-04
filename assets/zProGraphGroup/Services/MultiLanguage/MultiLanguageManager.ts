@@ -1,28 +1,28 @@
-// Learn TypeScript:
-//  - https://docs.cocos.com/creator/manual/en/scripting/typescript.html
-// Learn Attribute:
-//  - https://docs.cocos.com/creator/manual/en/scripting/reference/attributes.html
-// Learn life-cycle callbacks:
-//  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
+import pggGlobalManager from "../../pggGlobalManager";
+
 
 const {ccclass, property} = cc._decorator;
-
+export const enum LanguageCode {
+    NONE = 0,
+    FA = 1,
+    EN = 2
+}
 @ccclass
-export default class NewClass extends cc.Component {
+export default class MultiLanguageManager extends cc.Component {
 
-    @property(cc.Label)
-    label: cc.Label = null;
 
-    @property
-    text: string = 'hello';
+    // @ts-ignore
+    @property({type: cc.Enum(LanguageCode)})
+    defaultUiLanguageCode: LanguageCode = 0;
 
-    // LIFE-CYCLE CALLBACKS:
+    // @ts-ignore
+    @property({type: cc.Enum(LanguageCode)})
+    defaultPuzzleLanguageCode: LanguageCode = 0;
 
-    // onLoad () {}
 
-    start () {
-
+    protected onLoad() {
+        pggGlobalManager.multilanguageManager = this;
     }
 
-    // update (dt) {}
+
 }

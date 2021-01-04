@@ -1,6 +1,6 @@
-import {ServerProtocolEnum} from "../../Server/ServerComponent";
 import LoginUserPassController from "./LoginUserPassController";
 import pggGlobalManager from "../../pggGlobalManager";
+import {UserType} from "./UserManager";
 
 
 const {ccclass, property} = cc._decorator;
@@ -33,6 +33,8 @@ export default class LoginManager extends cc.Component {
     currentLoginPlatformC: any = null;
 
     init_onDone : any = null;
+
+    currentUserType : UserType = UserType.PLAYER;
 
     onLoad() {
         pggGlobalManager.loginManager = this;

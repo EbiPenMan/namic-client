@@ -1,0 +1,5 @@
+export const enum GlobalEventsName {
+    WEB_VIEW_ON_BACK_BTN = "WEB_VIEW_ON_BACK_BTN",
+    ON_CLICK_BTN_SHOW_DASHBOARD = "ON_CLICK_BTN_SHOW_DASHBOARD",
+
+}

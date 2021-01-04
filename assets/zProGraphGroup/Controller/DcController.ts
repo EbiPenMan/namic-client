@@ -7,11 +7,11 @@ const {ccclass, property} = cc._decorator;
 export default class DcController extends cc.Component {
 
     @property(cc.Node)
-    rootPanelNode: cc.Node;
+    rootPanelNode: cc.Node = null;
     @property(cc.Node)
-    itemsNode: cc.Node;
+    itemsNode: cc.Node = null;
     @property(cc.Node)
-    loaderNode: cc.Node;
+    loaderNode: cc.Node = null;
 
     checkConnectionInterval: any = null;
     onDisconnectTimeout: any = null;

@@ -40,7 +40,7 @@ export default class ServerComponent extends cc.Component {
         if (pggGlobalManager.serverManager == null) {
             pggGlobalManager.serverManager = new ServerManager();
             pggGlobalManager.serverManager.init(this.serverComponentFields);
-        } else if (pggGlobalManager.serverManager.serverComponentFields == null) {
+        } else if (pggGlobalManager.serverManager.fields == null) {
             pggGlobalManager.serverManager.init(this.serverComponentFields);
         }
     }

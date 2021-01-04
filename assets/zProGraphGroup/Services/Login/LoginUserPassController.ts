@@ -1,5 +1,6 @@
 import pggGlobalManager from "../../pggGlobalManager";
 import {LoginPlatformType} from "./LoginManager";
+import {UserType} from "./UserManager";
 
 
 const {ccclass, property} = cc._decorator;
@@ -9,19 +10,19 @@ export default class LoginUserPassController extends cc.Component {
 
 
     @property(cc.EditBox)
-    txt_userName: cc.EditBox;
+    txt_userName: cc.EditBox = null;
     @property(cc.EditBox)
-    txt_password: cc.EditBox;
+    txt_password: cc.EditBox = null;
     @property(cc.EditBox)
-    txt_passwordRepeat: cc.EditBox;
+    txt_passwordRepeat: cc.EditBox = null;
     @property(cc.Label)
-    lbl_message: cc.Label;
+    lbl_message: cc.Label = null;
     @property(cc.Node)
-    rootPanelNode: cc.Node;
+    rootPanelNode: cc.Node = null;
     @property(cc.Node)
-    itemsNode: cc.Node;
+    itemsNode: cc.Node = null;
     @property(cc.Node)
-    loaderNode: cc.Node;
+    loaderNode: cc.Node = null;
 
     showPanel_onDone: any = null;
     showPanel_onError: any = null;
@@ -65,10 +66,11 @@ export default class LoginUserPassController extends cc.Component {
                         // console.log("params: ", params);
                         // console.log("packetRes: ", packetRes);
                         if (packetRes.data) {
+                            pggGlobalManager.getUserManager().userData = packetRes.data;
                             self.lbl_message.string = "ورود موفقیت آمیز بود";
                             self.rootPanelNode.active = false;
                             if (self.showPanel_onDone)
-                                self.showPanel_onDone({userName:userName , password :btoa(password) });
+                                self.showPanel_onDone({userName: userName, password: btoa(password)});
                         } else if (packetRes.error) {
                             if (self.showPanel_onError)
                                 self.showPanel_onError(packetRes.error);
@@ -95,9 +97,10 @@ export default class LoginUserPassController extends cc.Component {
         const validateMessage = this.validateData(userName, password, passwordRepeat);
 
         if (validateMessage === "ok") {
+            let userType: UserType = pggGlobalManager.loginManager.currentUserType;
             const reqId = pggGlobalManager.serverManager.sendSingUp(
                 LoginPlatformType.USER_PASS,
-                {userName, password},
+                {userName, password, userType},
                 function (params, packetRes) {
                     if (packetRes.reqIdClient === reqId) {
                         // console.log("params: ", params);
@@ -128,9 +131,9 @@ export default class LoginUserPassController extends cc.Component {
         return "ok";
     }
 
-    onBack(){
+    onBack() {
         this.hidePanel();
-        if(this.showPanel_onError)
+        if (this.showPanel_onError)
             this.showPanel_onError();
     }
 }

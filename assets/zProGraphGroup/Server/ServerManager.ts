@@ -4,6 +4,7 @@ import pggUtility from "../Utility/pggUtility";
 import Packet from "./Packet";
 import {LoginPlatformType} from "../Services/Login/LoginManager";
 import pggGlobalManager from "../pggGlobalManager";
+import {MutableDataModel} from "../Models/UserModel";
 
 const {ccclass, property} = cc._decorator;
 
@@ -13,8 +14,8 @@ export default class ServerManager {
 
     public fields: ServerComponentFields = null;
     private socket: WebSocket = null;
-    private isConnected: boolean = false;
-    private isConnecting: boolean = false;
+    public isConnected: boolean = false;
+    public isConnecting: boolean = false;
     private callbacks: any[] = [];
 
     public static instance = null;
@@ -127,7 +128,7 @@ export default class ServerManager {
 
         // @ts-ignore
         new window.ProGraphGroup.logger
-            .LogT("Server Manager", "#00a80f" , (packet.error != null ? "#ff110050" : "#ffffff"))
+            .LogT("Server Manager", "#00a80f", (packet.error != null ? "#ff110050" : "#ffffff"))
             // @ts-ignore
             .setTitle("Get  Packet " + (packet.type != null ? "| " + packet.type : "") +
                 (packet.error != null ? " | " + "ERROR - " + packet.error.codeStr : " | OK"))
@@ -157,7 +158,7 @@ export default class ServerManager {
 
     }
 
-    sendSingIn(loginPlatformType: LoginPlatformType, loginPlatformData: any, callback, context, params) {
+    sendSingIn(loginPlatformType: LoginPlatformType, loginPlatformData: any, callback, context, params): string {
         const reqId = pggUtility.generateUUID();
         this.sendData(new Packet().setType(PK_TYPES_SEND.SING_IN).setReqIdClient(reqId).setData(
             {
@@ -172,7 +173,7 @@ export default class ServerManager {
         return reqId;
     }
 
-    sendSingUp(loginPlatformType: LoginPlatformType, loginPlatformData: any, callback, context, params) {
+    sendSingUp(loginPlatformType: LoginPlatformType, loginPlatformData: any, callback, context, params): string {
         const reqId = pggUtility.generateUUID();
         this.sendData(new Packet().setType(PK_TYPES_SEND.SING_UP).setReqIdClient(reqId).setData({
             loginPlatformType: loginPlatformType,
@@ -183,11 +184,53 @@ export default class ServerManager {
         return reqId;
     }
 
-    sendSingOut(callback, context, params) {
+    sendSingOut(callback, context, params): string {
         const reqId = pggUtility.generateUUID();
         this.sendData(new Packet().setType(PK_TYPES_SEND.SING_OUT).setReqIdClient(reqId));
         if (callback != null && context != null)
             this.addCallback(PK_TYPES_SEND.SING_OUT, callback, context, params, reqId, true);
+        return reqId;
+    }
+
+    sendUpdateMutableData(mutableData: MutableDataModel, callback, context, params) {
+        const reqId = pggUtility.generateUUID();
+        this.sendData(new Packet().setType(PK_TYPES_SEND.UPDATE_MUTABLE_DATA).setReqIdClient(reqId).setData(mutableData));
+        if (callback != null && context != null)
+            this.addCallback(PK_TYPES_SEND.UPDATE_MUTABLE_DATA, callback, context, params, reqId, true);
+        return reqId;
+    }
+
+    sendGetRootPlace(callback, context, params) {
+        const reqId = pggUtility.generateUUID();
+        this.sendData(new Packet().setType(PK_TYPES_SEND.PLACE_GET).setReqIdClient(reqId));
+        if (callback != null && context != null)
+            this.addCallback(PK_TYPES_SEND.PLACE_GET, callback, context, params, reqId, true);
+        return reqId;
+    }
+
+    sendGetMyPlace(callback, context, params) {
+        const reqId = pggUtility.generateUUID();
+        this.sendData(new Packet().setType(PK_TYPES_SEND.PLACE_GET).setReqIdClient(reqId));
+        if (callback != null && context != null)
+            this.addCallback(PK_TYPES_SEND.PLACE_GET, callback, context, params, reqId, true);
+        return reqId;
+    }
+
+    sendJoinPlace(placeId, callback, context, params) {
+        const reqId = pggUtility.generateUUID();
+        this.sendData(new Packet().setType(PK_TYPES_SEND.PLACE_JOIN).setReqIdClient(reqId)
+            .setData({placeId: placeId}));
+        if (callback != null && context != null)
+            this.addCallback(PK_TYPES_SEND.PLACE_JOIN, callback, context, params, reqId, true);
+        return reqId;
+    }
+
+    sendLeavePlace(placeId, callback, context, params) {
+        const reqId = pggUtility.generateUUID();
+        this.sendData(new Packet().setType(PK_TYPES_SEND.PLACE_LEAVE).setReqIdClient(reqId)
+            .setData({placeId: placeId}));
+        if (callback != null && context != null)
+            this.addCallback(PK_TYPES_SEND.PLACE_LEAVE, callback, context, params, reqId, true);
         return reqId;
     }
 
@@ -203,7 +246,8 @@ export default class ServerManager {
             packetType: packetType,
             callback: callback,
             context: context,
-            params: params
+            params: params,
+            isTemporary: isTemporary
         });
         return reqId;
     }
@@ -234,10 +278,14 @@ export default class ServerManager {
     }
 
     callCallback(packetType, packetRes) {
+        const self = this;
         this.callbacks
             .filter(x => x.packetType === packetType)
             .map(function (founded) {
                 founded.callback.call(founded.context, founded.params, packetRes);
+                if(founded.isTemporary){
+                    self.removeCallbackByReqId(founded.reqId);
+                }
             });
     }
 

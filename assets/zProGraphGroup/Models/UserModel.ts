@@ -1,28 +1,52 @@
-// Learn TypeScript:
-//  - https://docs.cocos.com/creator/manual/en/scripting/typescript.html
-// Learn Attribute:
-//  - https://docs.cocos.com/creator/manual/en/scripting/reference/attributes.html
-// Learn life-cycle callbacks:
-//  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
+import {LanguageCode} from "../Services/MultiLanguage/MultiLanguageManager";
 
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class NewClass extends cc.Component {
+export default class UserModel {
 
-    @property(cc.Label)
-    label: cc.Label = null;
+    _id: string;
+    publicData: PublicDataModel;
+    mutableData: MutableDataModel;
+    privateData: PrivateDataModel;
+    userType: string;
+    loginPlatforms: LoginPlatformUserDataModel[];
 
-    @property
-    text: string = 'hello';
+}
 
-    // LIFE-CYCLE CALLBACKS:
+export const enum GenderType {
+    NONE = 0,
+    MALE = 1,
+    FEMALE = 2
+}
 
-    // onLoad () {}
+@ccclass
+export class PublicDataModel {
+    name: string;
+    photoUrl: string;
+    level : number;
+}
 
-    start () {
+@ccclass
+export class MutableDataModel {
 
-    }
+    passWelcomePage : boolean;
+    ageRangeMin: number;
+    ageRangeMax: number;
+    gender: GenderType;
+    gameLanguageCode : LanguageCode;
+    puzzleLanguageCode : LanguageCode;
 
-    // update (dt) {}
+}
+
+@ccclass
+export class PrivateDataModel {
+
+
+}
+
+@ccclass
+export class LoginPlatformUserDataModel {
+
+
 }

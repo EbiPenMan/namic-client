@@ -1,6 +1,8 @@
 cc.Class({
     extends: cc.Component,
-
+    editor: {
+        executeInEditMode: true,
+    },
     properties: {
 
         target: cc.Node,
@@ -63,7 +65,19 @@ cc.Class({
             }
 
         }
+        if (this.noWidth === false) {
+            this.node.width = this.target.width;
 
+            if (this.widthMin > 0 && this.node.width < this.widthMin)
+                this.node.width = this.widthMin;
+            else if (this.widthMax > 0 && this.node.width > this.widthMax)
+                this.node.width = this.widthMax;
+
+            if (this.additionalWidth > 0) {
+                this.node.width += this.additionalWidth;
+            }
+
+        }
     },
 
 });

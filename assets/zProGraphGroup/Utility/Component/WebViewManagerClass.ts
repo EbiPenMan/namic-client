@@ -1,4 +1,5 @@
 import pggUtility from "../pggUtility";
+import {GlobalEventsName} from "../../Models/GlobalEventsName";
 
 const {ccclass, property} = cc._decorator;
 
@@ -30,7 +31,7 @@ export default class WebViewManagerClass {
         if (this.getPlatform() === "android") {
             window.webViewAndroidGameInterface.onBackBtn = function () {
                 console.log("[WebViewManagerClass] - [webView_android_onBackBtn] ");
-                pggUtility.sendGlobalEvent(null, "WEB_VIEW_ON_BACK_BTN");
+                pggUtility.sendGlobalEvent(null, GlobalEventsName.WEB_VIEW_ON_BACK_BTN);
             };
         } else {
 
